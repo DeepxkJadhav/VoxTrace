@@ -12,3 +12,4 @@ Automated and verified development entries.
 - `2026-08-07 16:26:00 +0530`: fix(sync): eliminate millisecond drift in timeline marker
 - `2026-08-07 18:43:00 +0530`: refactor(core): encapsulate audio decoding session state
 - `2026-08-12 10:15:00 +0530`: chore(build): optimize native wasm compilation flags
+- `2026-08-12 12:32:00 +0530`: feat(audio): adjust waveform normalization thresholds
