@@ -20,3 +20,4 @@ Automated and verified development entries.
 - `2026-08-19 12:32:00 +0530`: perf(memory): reuse circular audio ring buffer instances
 - `2026-08-19 14:49:00 +0530`: feat(filter): implement bandpass equalizer preset filters
 - `2026-08-19 16:26:00 +0530`: fix(sync): eliminate millisecond drift in timeline marker
+- `2026-08-19 18:43:00 +0530`: refactor(core): encapsulate audio decoding session state
