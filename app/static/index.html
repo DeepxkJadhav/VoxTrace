@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VoxTrace ? Audio Intelligence & RAG Studio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #090d16;
+      --card: rgba(18, 26, 44, 0.85);
+      --border: rgba(56, 189, 248, 0.18);
+      --accent: #38bdf8;
+      --accent-glow: rgba(56, 189, 248, 0.35);
+      --text: #f8fafc;
+      --muted: #94a3b8;
+      --green: #10b981;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      padding: 32px 20px;
+      line-height: 1.5;
+    }
+    .container {
+      max-width: 1040px;
+      margin: 0 auto;
+    }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 32px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--border);
+    }
+    .logo-badge {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .logo-badge h1 {
+      font-size: 24px;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      background: linear-gradient(135deg, #fff, var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 12px;
+      border-radius: 999px;
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      color: #34d399;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .status-pill .dot {
+      width: 7px;
+      height: 7px;
+      background: var(--green);
+      border-radius: 50%;
+      box-shadow: 0 0 8px var(--green);
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+    @media (max-width: 840px) { .grid { grid-template-columns: 1fr; } }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    }
+    .card h2 {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .card p {
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 20px;
+    }
+    .upload-zone {
+      border: 2px dashed rgba(56, 189, 248, 0.3);
+      border-radius: 12px;
+      padding: 32px 16px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      background: rgba(56, 189, 248, 0.03);
+    }
+    .upload-zone:hover {
+      border-color: var(--accent);
+      background: rgba(56, 189, 248, 0.08);
+    }
+    .file-input { display: none; }
+    .btn {
+      width: 100%;
+      padding: 12px 20px;
+      border-radius: 10px;
+      border: none;
+      background: var(--accent);
+      color: #090d16;
+      font-weight: 700;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-top: 14px;
+    }
+    .btn:hover { background: #7dd3fc; transform: translateY(-1px); }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .input-box {
+      width: 100%;
+      padding: 12px 16px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: #060911;
+      color: #fff;
+      font-size: 14px;
+      margin-bottom: 12px;
+      outline: none;
+    }
+    .input-box:focus { border-color: var(--accent); }
+    .output-box {
+      margin-top: 20px;
+      padding: 16px;
+      border-radius: 10px;
+      background: #060911;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: #cbd5e1;
+      max-height: 240px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+    }
+    .tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--accent);
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="logo-badge">
+        <h1>VoxTrace</h1>
+        <span class="status-pill"><span class="dot"></span> Online (v1.0.0)</span>
+      </div>
+      <div>
+        <a href="/docs" target="_blank" style="color: var(--accent); text-decoration: none; font-size: 13px; font-weight: 600;">Swagger Docs &rarr;</a>
+      </div>
+    </header>
+
+    <div class="grid">
+      <!-- 1. Transcribe & Vector Index Card -->
+      <div class="card">
+        <span class="tag">Stage 1 &bull; Speech to Vector</span>
+        <h2>??? Audio Ingestion & Indexing</h2>
+        <p>Upload any audio file (.wav, .mp3, .m4a) to transcribe via Whisper and generate FAISS vector embeddings.</p>
+
+        <div class="upload-zone" onclick="document.getElementById('audioInput').click()">
+          <span style="font-size: 28px; display: block; margin-bottom: 8px;">??</span>
+          <span id="uploadText" style="font-size: 13px; font-weight: 600; color: var(--accent);">Click to select audio file</span>
+          <input type="file" id="audioInput" class="file-input" accept=".wav,.mp3,.m4a,.flac,.ogg" onchange="fileSelected(this)">
+        </div>
+
+        <button id="uploadBtn" class="btn" onclick="transcribeAndIndex()">Transcribe &amp; Index to FAISS</button>
+
+        <div id="transcribeOutput" class="output-box" style="display: none;"></div>
+      </div>
+
+      <!-- 2. Semantic Search & RAG Card -->
+      <div class="card">
+        <span class="tag">Stage 2 &bull; Semantic Retrieval</span>
+        <h2>? Audio RAG Query</h2>
+        <p>Ask natural-language questions over all transcribed audio recordings in your FAISS vector database.</p>
+
+        <input type="text" id="ragQuery" class="input-box" placeholder="e.g. What was discussed about the system architecture?">
+        <button class="btn" onclick="queryRag()">Execute Semantic RAG Search</button>
+
+        <div id="ragOutput" class="output-box" style="display: none;"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let selectedFile = null;
+
+    function fileSelected(input) {
+      if (input.files && input.files[0]) {
+        selectedFile = input.files[0];
+        document.getElementById('uploadText').innerText = 'Selected: ' + selectedFile.name;
+      }
+    }
+
+    async function transcribeAndIndex() {
+      if (!selectedFile) {
+        // Create synthetic demo audio blob if no file chosen
+        const syntheticBlob = new Blob(["DEMO_AUDIO_WAVE_HEADER"], { type: "audio/wav" });
+        selectedFile = new File([syntheticBlob], "demo_session.wav", { type: "audio/wav" });
+      }
+
+      const btn = document.getElementById('uploadBtn');
+      const out = document.getElementById('transcribeOutput');
+      btn.disabled = true;
+      btn.innerText = 'Processing with Whisper & FAISS...';
+      out.style.display = 'block';
+      out.innerText = 'Transcribing audio and computing dense vectors...';
+
+      const formData = new FormData();
+      formData.append('file', selectedFile);
+      formData.append('session_name', selectedFile.name);
+
+      try {
+        const res = await fetch('/api/v1/transcribe-and-index', {
+          method: 'POST',
+          body: formData
+        });
+        const data = await res.json();
+        out.innerText = JSON.stringify(data, null, 2);
+      } catch (err) {
+        out.innerText = 'Error: ' + err.message;
+      } finally {
+        btn.disabled = false;
+        btn.innerText = 'Transcribe & Index to FAISS';
+      }
+    }
+
+    async function queryRag() {
+      const q = document.getElementById('ragQuery').value;
+      const out = document.getElementById('ragOutput');
+      if (!q.trim()) return;
+
+      out.style.display = 'block';
+      out.innerText = 'Retrieving vector nearest neighbors...';
+
+      try {
+        const res = await fetch('/api/v1/query', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ query: q, top_k: 3 })
+        });
+        const data = await res.json();
+        out.innerText = JSON.stringify(data, null, 2);
+      } catch (err) {
+        out.innerText = 'Error: ' + err.message;
+      }
+    }
+  </script>
+</body>
+</html>
