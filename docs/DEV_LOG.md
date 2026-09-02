@@ -23,3 +23,4 @@ Automated and verified development entries.
 - `2026-08-19 18:43:00 +0530`: refactor(core): encapsulate audio decoding session state
 - `2026-09-02 10:15:00 +0530`: chore(build): optimize native wasm compilation flags
 - `2026-09-02 12:32:00 +0530`: feat(audio): adjust waveform normalization thresholds
+- `2026-09-02 14:49:00 +0530`: fix(stream): prevent buffer underflow on burst audio frames
