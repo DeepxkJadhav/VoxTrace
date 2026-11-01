@@ -1,8 +1,32 @@
+# Virtual Environments & Python Cache
 .venv/
+venv/
 __pycache__/
-*.pyc
+*.py[cod]
+*$py.class
 uv.exe
 uvw.exe
 uvx.exe
-.DS_Store
+.pytest_cache/
+.coverage
+htmlcov/
 *.log
+.DS_Store
+
+# Local SQLite Database & WAL logs
+*.db
+*.db-wal
+*.db-shm
+voxtrace.db*
+
+# Local Development & Scratch artifacts
+applied_scholarships.*
+gh_cli/
+ghostvision/
+scholarship_agent/
+sentient-ui/
+*.bat
+run_agent.py
+tests/test_e2e_form_fill.py
+tests/test_pipeline.py
+tests/test_scholarship_agent.py

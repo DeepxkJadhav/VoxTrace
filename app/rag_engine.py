@@ -1,13 +1,28 @@
 import math
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Optional
 from app.config import settings
+from app.storage import VoxTraceStorage
 
 class VoxTraceRAGEngine:
-    def __init__(self, embedding_model_name: str = settings.EMBEDDING_MODEL):
-        self.embedding_model_name = embedding_model_name
+    def __init__(self, storage: Optional[VoxTraceStorage] = None):
+        self.storage = storage or VoxTraceStorage()
         self.metadata: List[Dict[str, Any]] = []
         self.vectors: List[List[float]] = []
-        self._faiss_index = None
+        self._load_from_storage()
+
+    def _load_from_storage(self):
+        """Restore all vector chunks and metadata from durable storage."""
+        saved_chunks = self.storage.load_all_indexed_chunks()
+        self.metadata = []
+        self.vectors = []
+        for c in saved_chunks:
+            self.metadata.append({
+                "transcript_id": c["job_id"],
+                "chunk_id": c["chunk_id"],
+                "text": c["text"],
+                "source": c.get("source", {})
+            })
+            self.vectors.append(c["embedding"])
 
     def chunk_text(self, text: str, chunk_size: int = settings.CHUNK_SIZE, overlap: int = settings.CHUNK_OVERLAP) -> List[str]:
         words = text.split()
@@ -25,7 +40,6 @@ class VoxTraceRAGEngine:
         return chunks if chunks else [text]
 
     def _embed(self, texts: List[str]) -> List[List[float]]:
-        # Fast semantic token vectorizer
         embeddings = []
         for t in texts:
             words = t.lower().split()
@@ -43,14 +57,19 @@ class VoxTraceRAGEngine:
             return 0
         
         chunk_vectors = self._embed(chunks)
+        chunk_records = []
         for idx, (chunk, vec) in enumerate(zip(chunks, chunk_vectors)):
-            self.metadata.append({
+            record = {
                 "transcript_id": transcript_id,
                 "chunk_id": idx,
                 "text": chunk,
+                "embedding": vec,
                 "source": source_metadata or {}
-            })
+            }
+            self.metadata.append(record)
             self.vectors.append(vec)
+            chunk_records.append(record)
+            
         return len(chunks)
 
     def search(self, query: str, top_k: int = settings.TOP_K_RESULTS) -> List[Dict[str, Any]]:
@@ -84,7 +103,7 @@ class VoxTraceRAGEngine:
         answer = (
             f"Retrieved from Audio Transcript ({best.get('source', {}).get('filename', 'Audio Session')}):\n\n"
             f'"{best["text"]}"\n\n'
-            f"[Retrieved with FAISS Semantic Search ? Similarity Confidence: {int(best['score'] * 100)}%]"
+            f"[Retrieved with Semantic Search — Similarity Confidence: {int(best['score'] * 100)}%]"
         )
 
         return {
