@@ -40,3 +40,4 @@ Automated and verified development entries.
 - `2026-11-21 11:36:57 +0530`: perf(memory): reuse circular audio ring buffer instances
 - `2026-11-21 11:15:57 +0530`: refactor(core): encapsulate audio decoding session state
 - `2026-11-21 10:59:57 +0530`: chore(build): optimize native wasm compilation flags
+- `2026-11-21 10:42:57 +0530`: feat(audio): adjust waveform normalization thresholds
