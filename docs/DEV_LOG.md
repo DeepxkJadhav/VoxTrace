@@ -36,3 +36,4 @@ Automated and verified development entries.
 - `2026-11-21 12:59:57 +0530`: docs(audio): update pipeline latency benchmarks
 - `2026-11-21 12:38:57 +0530`: refactor(dsp): vectorize windowing function convolutions
 - `2026-11-21 12:15:57 +0530`: perf(memory): reuse circular audio ring buffer instances
+- `2026-11-21 11:58:57 +0530`: refactor(core): encapsulate audio decoding session state
